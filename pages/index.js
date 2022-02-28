@@ -1,22 +1,72 @@
-// @generated: @expo/next-adapter@2.1.52
+import 'react-native-url-polyfill/auto';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { useColorScheme } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { ThemeProvider } from 'react-native-elements';
+import { useSession } from './../hooks/useSupabase';
+
+import Auth from './Auth';
+import Home from './Home';
+import Account from './Account';
+import Book from './Book';
+import MyBookings from './MyBookings';
+import AllBookings from './AllBookings';
+import FloorPlan from './FloorPlan';
+import { lightTheme, darkTheme } from './../utils/theme';
+import useFont from './../hooks/useFont';
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
+  const session = useSession();
+  const isFontLoaded = useFont();
+  const colorScheme = useColorScheme();
+  const theme = colorScheme === 'dark' ? darkTheme : lightTheme;
+
+  if (!isFontLoaded) return null;
+
+  if (!session) {
+    return (
+      <ThemeProvider theme={theme}>
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen name="Auth" component={Auth} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </ThemeProvider>
+    );
+  }
+
+  // useDark={colorScheme === 'dark'}
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Welcome to Expo + Next.js 👋</Text>
-    </View>
+    <ThemeProvider theme={theme}>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Home"
+            component={Home}
+            options={{ title: 'I call dibs @Nautes' }}
+          />
+          <Stack.Screen name="Account" component={Account} />
+          <Stack.Screen name="Book" component={Book} />
+          <Stack.Screen
+            name="MyBookings"
+            component={MyBookings}
+            options={{ title: 'My bookings' }}
+          />
+          <Stack.Screen
+            name="AllBookings"
+            component={AllBookings}
+            options={{ title: 'All bookings' }}
+          />
+          <Stack.Screen
+            name="FloorPlan"
+            component={FloorPlan}
+            options={{ title: 'Floor plan' }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </ThemeProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  text: {
-    fontSize: 16,
-  },
-});
