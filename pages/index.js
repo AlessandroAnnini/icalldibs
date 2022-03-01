@@ -1,10 +1,11 @@
 import 'react-native-url-polyfill/auto';
 import React from 'react';
-import { useColorScheme } from 'react-native';
+import { useColorScheme, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ThemeProvider } from 'react-native-elements';
 import { useSession } from './../hooks/useSupabase';
+import { getRandomGradient } from './../utils/gradient';
 
 import Auth from './Auth';
 import Home from './Home';
@@ -26,7 +27,9 @@ export default function App() {
 
   if (!isFontLoaded) return null;
 
-  if (!session) {
+  if (session === undefined) return <Text>Loading...</Text>;
+
+  if (session === null) {
     return (
       <ThemeProvider theme={theme}>
         <NavigationContainer>
@@ -46,7 +49,14 @@ export default function App() {
           <Stack.Screen
             name="Home"
             component={Home}
-            options={{ title: 'I call dibs @Nautes' }}
+            options={{
+              title: 'I call dibs @Nautes',
+              // headerStyle: {
+              //   background: getRandomGradient(),
+              //   backgroundSize: '200% 100%',
+              //   backgroundPosition: '100% 0',
+              // },
+            }}
           />
           <Stack.Screen name="Account" component={Account} />
           <Stack.Screen name="Book" component={Book} />
