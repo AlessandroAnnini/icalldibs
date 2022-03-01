@@ -5,11 +5,23 @@ const useSession = () => {
   const [session, setSession] = useState(null);
 
   useEffect(() => {
-    setSession(supabase.auth.session());
+    try {
+      setSession(supabase.auth.session());
+    } catch (error) {
+      alert('session', error.message);
+    }
 
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setSession(session);
+      }
+    );
+
+    return () => {
+      if (authListener) {
+        authListener.unsubscribe();
+      }
+    };
   }, []);
 
   return session;

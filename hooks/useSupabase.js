@@ -12,7 +12,7 @@ import {
 import { supabase } from './../lib/supabase';
 
 export const useSession = () => {
-  const [session, setSession] = useState(null);
+  const [session, setSession] = useState();
   const { setUserId } = useAppStore(
     (state) => ({ setUserId: state.setUserId }),
     shallow
